@@ -1,8 +1,11 @@
--- Посчитайте общее количество заказов в таблице orders, количество заказов с пятью и более товарами и найдите долю заказов с пятью и более товарами в общем количестве заказов.
--- В результирующей таблице отразите все три значения — поля назовите соответственно orders, large_orders, large_orders_share.
--- Долю заказов с пятью и более товарами в общем количестве товаров округлите до двух знаков после запятой.
+-- Для каждого пользователя в таблице user_actions посчитайте общее количество оформленных заказов и долю отменённых заказов.
+-- Новые колонки назовите соответственно orders_count и cancel_rate. Колонку с долей отменённых заказов округлите до двух знаков после запятой.
+-- В результат включите только тех пользователей, которые оформили больше трёх заказов и у которых показатель cancel_rate составляет не менее 0.5.
+-- Результат отсортируйте по возрастанию id пользователя.
 SELECT
-COUNT(order_id) as orders,
-COUNT(order_id) FILTER(WHERE array_length(product_ids, 1) >=5) as large_orders,
-ROUND(COUNT(order_id) FILTER(WHERE array_length(product_ids, 1) >=5) / COUNT(order_id)::DECIMAL, 2) as large_orders_share
-FROM orders
+user_id,
+COUNT(order_id) FILTER (where action = 'create_order') as orders_count,
+ROUND(COUNT(order_id) FILTER (where action = 'cancel_order')::DECIMAL / COUNT(order_id) FILTER (where action = 'create_order'), 2) as cancel_rate
+FROM user_actions
+GROUP BY user_id having COUNT(order_id) FILTER (where action = 'create_order') > 3 AND COUNT(order_id) FILTER (where action = 'cancel_order')::DECIMAL / COUNT(order_id) FILTER (where action = 'create_order') >= 0.5
+ORDER BY user_id

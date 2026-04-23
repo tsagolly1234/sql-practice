@@ -1,14 +1,9 @@
--- Давайте представим, что по какой-то необъяснимой причине мы вдруг решили в одночасье повысить цену всех товаров в таблице products на 5%.
--- Выведите id и наименования всех товаров, их старую и новую цену. Колонку со старой ценой назовите old_price, а колонку с новой — new_price.
--- Результат отсортируйте сначала по убыванию новой цены, затем по возрастанию id товара.
-
+-- Посчитайте общее количество заказов в таблице orders, количество заказов с пятью и более товарами и найдите долю заказов с пятью и более товарами в общем количестве заказов.
+-- В результирующей таблице отразите все три значения — поля назовите соответственно orders, large_orders, large_orders_share.
+-- Долю заказов с пятью и более товарами в общем количестве товаров округлите до двух знаков после запятой.
+-- Поля в результирующей таблице: orders, large_orders, large_orders_share
 SELECT
-  product_id,
-  name,
-  price as old_price,
-  price * 0.05 + price as new_price
-FROM
-  products
-ORDER BY
-  new_price DESC,
-  product_id
+COUNT(order_id) as orders,
+COUNT(order_id) FILTER(WHERE array_length(product_ids, 1) >=5) as large_orders,
+ROUND(COUNT(order_id) FILTER(WHERE array_length(product_ids, 1) >=5) / COUNT(order_id)::DECIMAL, 2) as large_orders_share
+FROM orders

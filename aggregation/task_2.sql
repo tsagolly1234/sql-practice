@@ -1,7 +1,9 @@
--- Рассчитайте среднюю цену товаров в таблице products, в названиях которых присутствуют слова «чай» или «кофе». 
--- Любым известным способом исключите из расчёта товары, содержащие в названии «иван-чай» или «чайный гриб».
--- Среднюю цену округлите до двух знаков после запятой. Столбец с полученным значением назовите avg_price.
-SELECT 
-round(avg(price), 2) as avg_price
-FROM products
-WHERE (name NOT LIKE '%иван-чай%' and name NOT LIKE '%чайный гриб%') and (name like '%чай %' OR name like '%кофе%')
+-- А теперь по данным таблицы courier_actions определите курьеров, которые в сентябре 2022 года доставили только по одному заказу.
+-- В этот раз выведите всего одну колонку с id курьеров. Колонку с числом заказов в результат включать не нужно.
+-- Результат отсортируйте по возрастанию id курьера.
+SELECT courier_id
+FROM courier_actions
+WHERE DATE_PART('month', time) = 9 AND DATE_PART('year', time) = 2022 AND action = 'deliver_order'
+GROUP BY courier_id
+HAVING COUNT(order_id) = 1
+ORDER BY courier_id
